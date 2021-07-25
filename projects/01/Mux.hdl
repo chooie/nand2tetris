@@ -7,6 +7,20 @@
  * Multiplexor:
  * out = a if sel == 0
  *       b otherwise
+ *
+ *  x  y sel | Mux(x, y, sel)
+ *  0  0  0  | 0
+ *  0  0  1  | 0
+ *  0  1  0  | 0
+ *  0  1  1  | 1  –  F1 : And(Not(x), y, sel)
+ *  1  0  0  | 1  –  F2 : And(x, Not(y), Not(sel))
+ *  1  0  1  | 0
+ *  1  1  0  | 1  –  F3 : And(x, y, Not(sel))
+ *  1  1  1  | 1  –  F4 : And(x, y, sel)
+
+ => F1 Or F2 Or F3 Or F4
+ => ((F1 Or F2) Or F3) Or F4
+
  */
 
 CHIP Mux {
@@ -14,5 +28,23 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    Not(in=a, out=notA);
+    Not(in=b, out=notB);
+    Not(in=sel, out=notSel);
+
+    And(a=notA, b=b, out=out1);
+    And(a=out1, b=sel, out=outFirst); // F1
+    
+    And(a=a, b=notB, out=out2);
+    And(a=out2, b=notSel, out=outSecond); // F2
+
+    And(a=a, b=b, out=out3);
+    And(a=out3, b=notSel, out=outThird); // F3
+
+    And(a=a, b=b, out=out4);
+    And(a=out4, b=sel, out=outFourth); // F4
+
+    Or(a=outFirst, b=outSecond, out=orOut1);
+    Or(a=orOut1, b=outThird, out=orOut2);
+    Or(a=orOut2, b=outFourth, out=out);
 }
