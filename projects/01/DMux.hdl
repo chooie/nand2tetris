@@ -7,6 +7,13 @@
  * Demultiplexor:
  * {a, b} = {in, 0} if sel == 0
  *          {0, in} if sel == 1
+ *
+ * x sel | a  b
+ * 0  0  | 0  0                  a -> And Not(sel)
+ * 0  1  | 0  0                   /
+ * 1  0  | 1  0  And(x, sel) Or x
+ * 1  1  | 0  1                   \
+ *                               b -> And sel
  */
 
 CHIP DMux {
@@ -14,5 +21,11 @@ CHIP DMux {
     OUT a, b;
 
     PARTS:
-    // Put your code here:
+    And(a=in, b=sel, out=andOut);
+    Or(a=andOut, b=in, out=orOut);
+
+    Not(in=sel, out=notSel);
+
+    And(a=orOut, b=notSel, out=a);
+    And(a=orOut, b=sel, out=b);
 }
