@@ -1,7 +1,6 @@
-<p align="center" width="100%">
-From Nand to Tetris
-===================
-</p>
+<p align="center">
+  <h1>From Nand to Tetris</h1>
+<p>
 
 <p align="center" width="100%">
   <img width="50%" alt="The Nand2tetris logo" src="nand2tetris.webp" />
