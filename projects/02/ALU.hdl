@@ -42,5 +42,81 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    /*
+     * ----
+     * X 
+     * ----
+     */
+    // Zeroing a value
+    And16(a=x, b[0..15]=false, out=zeroedX);
+    Mux16(a=x, b=zeroedX, sel=zx, out=zxOutput);
+
+    // Negating a value
+    Not16(in=zxOutput, out=notX);
+    Mux16(a=zxOutput, b=notX, sel=nx, out=nxOutput);
+
+    /*
+     * ----
+     * Y
+     * ----
+     */
+    And16(a=y, b[0..15]=false, out=zeroedY);
+    Mux16(a=y, b=zeroedY, sel=zy, out=zyOutput);
+
+    // Negating a value
+    Not16(in=zyOutput, out=notY);
+    Mux16(a=zyOutput, b=notY, sel=ny, out=nyOutput);
+
+    /*
+     * ----
+     * f step
+     * ----
+     */
+
+    // Addition
+    Add16(a=nxOutput, b=nyOutput, out=xyAddition);
+
+    // Bitwise and
+    And16(a=nxOutput, b=nyOutput, out=xyBitwiseAnd);
+
+    Mux16(a=xyBitwiseAnd, b=xyAddition, sel=f, out=fOutput);
+
+    /*
+     * ----
+     * no step
+     * ----
+     */
+    Not16(in=fOutput, out=notOutput);
+    // Need to specify two outs
+    // https://classes.engineering.wustl.edu/cse365/a2.php
+    Mux16(
+        a=fOutput, 
+        b=notOutput, 
+        sel=no, 
+        out[0..7]=firstNoOutput, 
+        out[8..15]=secondNoOutput, 
+        out[15]=mostSignificantOutputBit, 
+        out=out
+    );
+
+    /*
+     * ----
+     * zr
+     * ----
+     */
+    // To check for 0, Or every single bit with the next one and make sure no 1 is present
+    Or8Way(in=firstNoOutput, out=firstOrOutput);
+    Or8Way(in=secondNoOutput, out=secondOrOutput);
+
+    Or(a=firstOrOutput, b=secondOrOutput, out=orOutput);
+
+    Mux(a=true, b=false, sel=orOutput, out=zr);
+
+    /*
+     * ----
+     * ng
+     * ----
+     */
+    // False if the most significant bit is 1
+    Mux(a=false, b=true, sel=mostSignificantOutputBit, out=ng);
 }
