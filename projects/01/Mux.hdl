@@ -3,6 +3,42 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/01/Mux.hdl
 
+CHIP Mux {
+    IN a, b, sel;
+    OUT out;
+
+    PARTS:
+    Not(in=a, out=notA);
+    Not(in=sel, out=notSel);
+
+    // First part of DNF
+    // a And Not(b Or sel)
+    Or(a=b, b=sel, out=first);
+    Not(in=first, out=notFirst);
+    And(a=a, b=notFirst, out=firstExpression);
+
+    // Second part of DNF
+    // (a And b) And Not(sel)
+    And(a=a, b=b, out=second);
+    And(a=second, b=notSel, out=secondExpression);
+
+    // Third part of DNF
+    // Not(a) And (b And sel)
+    And(a=b, b=sel, out=bAndSel); // Can reuse this in 4th expression
+    And(a=notA, b=bAndSel, out=thirdExpression);
+
+    // Fourth part of DNF
+    // a And (b And sel)
+    And(a=a, b=bAndSel, out=fourthExpression);
+
+    // Or all parts of DNF to get make full DNF
+    Or(a=firstExpression, b=secondExpression, out=orOut1);
+    Or(a=orOut1, b=thirdExpression, out=orOut2);
+    Or(a=orOut2, b=fourthExpression, out=out);
+}
+
+// NOTE: Old solution. This one requires an extra gate.
+
 /** 
  * Multiplexor:
  * out = a if sel == 0
@@ -23,28 +59,22 @@
 
  */
 
-CHIP Mux {
-    IN a, b, sel;
-    OUT out;
+// Not(in=a, out=notA);
+// Not(in=b, out=notB);
+// Not(in=sel, out=notSel);
 
-    PARTS:
-    Not(in=a, out=notA);
-    Not(in=b, out=notB);
-    Not(in=sel, out=notSel);
+// And(a=notA, b=b, out=out1);
+// And(a=out1, b=sel, out=outFirst); // F1
 
-    And(a=notA, b=b, out=out1);
-    And(a=out1, b=sel, out=outFirst); // F1
-    
-    And(a=a, b=notB, out=out2);
-    And(a=out2, b=notSel, out=outSecond); // F2
+// And(a=a, b=notB, out=out2);
+// And(a=out2, b=notSel, out=outSecond); // F2
 
-    And(a=a, b=b, out=out3);
-    And(a=out3, b=notSel, out=outThird); // F3
+// And(a=a, b=b, out=out3);
+// And(a=out3, b=notSel, out=outThird); // F3
 
-    And(a=a, b=b, out=out4);
-    And(a=out4, b=sel, out=outFourth); // F4
+// And(a=a, b=b, out=out4);
+// And(a=out4, b=sel, out=outFourth); // F4
 
-    Or(a=outFirst, b=outSecond, out=orOut1);
-    Or(a=orOut1, b=outThird, out=orOut2);
-    Or(a=orOut2, b=outFourth, out=out);
-}
+// Or(a=outFirst, b=outSecond, out=orOut1);
+// Or(a=orOut1, b=outThird, out=orOut2);
+// Or(a=orOut2, b=outFourth, out=out);
