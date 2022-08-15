@@ -8,34 +8,44 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    Not(in=a, out=notA);
+    // From http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/Is-my-gate-logic-too-complicated-td4035503.html
+
     Not(in=sel, out=notSel);
-
-    // First part of DNF
-    // a And Not(b Or sel)
-    Or(a=b, b=sel, out=first);
-    Not(in=first, out=notFirst);
-    And(a=a, b=notFirst, out=firstExpression);
-
-    // Second part of DNF
-    // (a And b) And Not(sel)
-    And(a=a, b=b, out=second);
-    And(a=second, b=notSel, out=secondExpression);
-
-    // Third part of DNF
-    // Not(a) And (b And sel)
-    And(a=b, b=sel, out=bAndSel); // Can reuse this in 4th expression
-    And(a=notA, b=bAndSel, out=thirdExpression);
-
-    // Fourth part of DNF
-    // a And (b And sel)
-    And(a=a, b=bAndSel, out=fourthExpression);
-
-    // Or all parts of DNF to get make full DNF
-    Or(a=firstExpression, b=secondExpression, out=orOut1);
-    Or(a=orOut1, b=thirdExpression, out=orOut2);
-    Or(a=orOut2, b=fourthExpression, out=out);
+    And(a=notSel, b=a, out=aOut);
+    And(a=sel, b=b, out=bOut);
+    Or(a=aOut, b=bOut, out=out);
 }
+/*
+// NOTE: Another old solution. Requires one less gate
+Not(in=a, out=notA);
+Not(in=sel, out=notSel);
+
+// First part of DNF
+// a And Not(b Or sel)
+Or(a=b, b=sel, out=first);
+Not(in=first, out=notFirst);
+And(a=a, b=notFirst, out=firstExpression);
+
+// Second part of DNF
+// (a And b) And Not(sel)
+And(a=a, b=b, out=second);
+And(a=second, b=notSel, out=secondExpression);
+
+// Third part of DNF
+// Not(a) And (b And sel)
+And(a=b, b=sel, out=bAndSel); // Can reuse this in 4th expression
+And(a=notA, b=bAndSel, out=thirdExpression);
+
+// Fourth part of DNF
+// a And (b And sel)
+And(a=a, b=bAndSel, out=fourthExpression);
+
+// Or all parts of DNF to get make full DNF
+Or(a=firstExpression, b=secondExpression, out=orOut1);
+Or(a=orOut1, b=thirdExpression, out=orOut2);
+Or(a=orOut2, b=fourthExpression, out=out);
+*/
+
 
 // NOTE: Old solution. This one requires an extra gate.
 
