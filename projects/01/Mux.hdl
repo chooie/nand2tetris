@@ -11,8 +11,8 @@ CHIP Mux {
     // From http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/Is-my-gate-logic-too-complicated-td4035503.html
 
     Not(in=sel, out=notSel);
-    And(a=notSel, b=a, out=aOut);
-    And(a=sel, b=b, out=bOut);
+    And(a=a, b=notSel, out=aOut);
+    And(a=b, b=sel, out=bOut);
     Or(a=aOut, b=bOut, out=out);
 }
 /*
