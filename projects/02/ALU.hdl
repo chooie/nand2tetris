@@ -48,8 +48,7 @@ CHIP ALU {
      * ----
      */
     // Zeroing a value
-    And16(a=x, b[0..15]=false, out=zeroedX);
-    Mux16(a=x, b=zeroedX, sel=zx, out=zxOutput);
+    Mux16(a=x, b[0..15]=false, sel=zx, out=zxOutput);
 
     // Negating a value
     Not16(in=zxOutput, out=notX);
@@ -60,8 +59,7 @@ CHIP ALU {
      * Y
      * ----
      */
-    And16(a=y, b[0..15]=false, out=zeroedY);
-    Mux16(a=y, b=zeroedY, sel=zy, out=zyOutput);
+    Mux16(a=y, b[0..15]=false, sel=zy, out=zyOutput);
 
     // Negating a value
     Not16(in=zyOutput, out=notY);
@@ -110,7 +108,7 @@ CHIP ALU {
 
     Or(a=firstOrOutput, b=secondOrOutput, out=orOutput);
 
-    Mux(a=true, b=false, sel=orOutput, out=zr);
+    Not(in=orOutput, out=zr);
 
     /*
      * ----
