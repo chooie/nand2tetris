@@ -18,12 +18,9 @@ CHIP PC {
     PARTS:
     Inc16(in=clockedOut, out=incOut);
 
-    Or(a=inc, b=load, out=incOrLoad);
-    Or(a=incOrLoad, b=reset, out=setOut);
-
     Mux16(a=clockedOut, b=incOut, sel=inc, out=out1);
     Mux16(a=out1, b=in, sel=load, out=out2);
     Mux16(a=out2, b=false, sel=reset, out=out3);
 
-    Register(in=out3, load=setOut, out=clockedOut, out=out);
+    Register(in=out3, load=true, out=clockedOut, out=out);
 }
