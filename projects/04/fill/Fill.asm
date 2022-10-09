@@ -81,20 +81,36 @@ M=0 // By default, paint white
     @ENDROWSLOOP
     D;JGE // Stop painting if we've covered all rows
 
-    @paint
-    D=M // Get paint value
-    @currentAddress
-    A=M
-    M=D // Paint to pixels with paint value
+    @currentColumn
+    M=0
+
+    (COLUMNSLOOP)
+      @currentColumn
+      D=M
+      @numbersPerRow
+      D=D-M
+      @ENDCOLUMNSLOOP
+      D;JGE
+
+      @paint
+      D=M // Get paint value
+      @currentAddress
+      A=M
+      M=D // Paint to pixels with paint value
+
+      @currentColumn
+      M=M+1
+
+      @currentAddress
+      M=M+1
+
+      @COLUMNSLOOP
+      0;JMP
+    (ENDCOLUMNSLOOP)
 
     // increment current row
     @currentRow
     M=M+1
-
-    @32
-    D=A
-    @currentAddress
-    M=D+M // Increment address by 32 (512 pixels) to get to next row
 
     @ROWSLOOP
     0;JMP
