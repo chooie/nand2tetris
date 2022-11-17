@@ -25,6 +25,16 @@
  * than to the address resulting from executing the current instruction. 
  */
 
+ /**
+  * Bit Address: 15  14  13  12  11  10   9   8   7   6   5   4   3   2   1   0
+  * ----------------------------------------------------------------------------
+  *              op   1   1  a   c1  c2  c3  c4  c5  c6  d1  d2  d3  j1  j2  j3
+  *    a or c ___/    |___|
+  *  instruction        |
+  *     a: 0         not used
+  *     c: 1
+  */
+
 CHIP CPU {
 
     IN  inM[16],         // M value input  (M = contents of RAM[A])
@@ -39,5 +49,152 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // A Register / OUT addressM
+    Mux16(
+        a=instruction,
+        b=aluOutput,
+        // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+        sel=instruction[15],
+        out=instructionMuxOut
+    );
+
+    // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+    Not(in=instruction[15], out=isAInstruction);
+    // instruction[5] is d1 and determines if we write to the A register
+    Or(a=isAInstruction, b=instruction[5], out=isAInstructionOrDestIsA);
+    ARegister(
+        in=instructionMuxOut,
+        load=isAInstructionOrDestIsA,
+        out=ARegisterOut,
+        // Whatever is stored in the A register is the potential memory address
+        out[0..14]=addressM
+    );
+
+    // OUT writeM
+    // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+    // instruction[3] is d3 and determines if we write to M
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+
+    // D Register
+    And(
+        // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+        a=instruction[15],
+        // instruction[4] is d2 and determines if we write to D
+        b=instruction[4],
+        out=isAInstructionAndShouldLoadIntoD
+    );
+    DRegister(
+        in=aluOutput,
+        load=isAInstructionAndShouldLoadIntoD,
+        out=DRegisterOut
+    );
+
+    And(
+        // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+        a=instruction[15],
+        // instruction[12] is a
+        b=instruction[12],
+        out=shouldReadFromMemory
+    );
+    Mux16(
+        a=ARegisterOut,
+        b=inM,
+        sel=shouldReadFromMemory,
+        out=AOrMOutput
+    );
+
+    // ALU / OUT outM
+    ALU(
+        x=DRegisterOut,
+        y=AOrMOutput,
+        // instruction[11] is c1
+        zx=instruction[11],
+        // instruction[10] is c2
+        nx=instruction[10],
+        // instruction[9] is c3
+        zy=instruction[9],
+        // instruction[8] is c4
+        ny=instruction[8],
+        // instruction[7] is c5
+        f=instruction[7],
+        // instruction[6] is c6
+        no=instruction[6],
+        out=aluOutput,
+        out=outM,
+        zr=isZero,
+        ng=isNegative
+    );
+
+    // PC / OUT pc
+
+    // Figure out whether to jmp
+    DMux8Way(
+        in=true,
+        // instruction[0] is j3
+        sel[0]=instruction[0],
+        // instruction[1] is j2
+        sel[1]=instruction[1],
+        // instruction[2] is j3
+        sel[2]=instruction[2],
+        // Don't do anything with isNull
+        a=isNull,
+        b=jgt,
+        c=jeq,
+        d=jge,
+        e=jlt,
+        f=jne,
+        g=jle,
+        h=jmp
+    );
+
+    // Only jump if greater than zero
+    Not(in=isZero, out=isNotZero);
+    Not(in=isNegative, out=isNotNegative);
+    And(a=isNotNegative, b=isNotZero, out=isGreaterThanZero);
+    And(a=jgt, b=isGreaterThanZero, out=jgtSatisfied);
+
+    // Only jump if is zero
+    And(a=jeq, b=isZero, out=jeqSatisfied);
+
+    // Only jump if greater or equal to zero
+    Or(a=isGreaterThanZero, b=isZero, out=isGreaterOrEqualToZero);
+    And(a=jge, b=isGreaterOrEqualToZero, out=jgeSatisfied);
+
+    // Only jump if less than zero
+    And(a=jlt, b=isNegative, out=jltSatisfied);
+
+    // Only jump if not equal to zero
+    And(a=jne, b=isNotZero, out=jneSatisfied);
+
+    // Only jump if less than or equal to zero
+    Or(a=isNegative, b=isZero, out=isLessThanOrEqualToZero);
+    And(a=jle, b=isLessThanOrEqualToZero, out=jleSatisfied);
+
+    Or8Way(
+        // Don't do anything about the null (always indicates we don't want to
+        // jump)
+        in[0]=false,
+        in[1]=jgtSatisfied,
+        in[2]=jeqSatisfied,
+        in[3]=jgeSatisfied,
+        in[4]=jltSatisfied,
+        in[5]=jneSatisfied,
+        in[6]=jleSatisfied,
+        // We jmp unconditionally
+        in[7]=jmp,
+        out=shouldJump
+    );
+
+    // instruction[15] is the op code (0 if A instruction, 1 if C instruction)
+    And(a=instruction[15], b=shouldJump, out=isCInstructionAndShouldJump);
+
+    PC(
+        in=ARegisterOut,
+        load=isCInstructionAndShouldJump,
+        inc=true,
+        reset=reset,
+        out[0..14]=pc
+    );
 }
