@@ -19,5 +19,19 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    // Put your code here:
+
+    // Such simple things, and we make of them something so complex, it defeats
+    // us, Almost.
+
+    ROM32K(address=pcOut, out=instructionOut);
+    CPU(
+        inM=memoryOut,
+        instruction=instructionOut,
+        reset=reset,
+        outM=outM,
+        writeM=writeMOut,
+        addressM=addressMOut,
+        pc=pcOut
+    );
+    Memory(in=outM, load=writeMOut, address=addressMOut, out=memoryOut);
 }
