@@ -1,0 +1,11 @@
+{
+  "cSpell.ignoreWords": [],
+  "cSpell.words": ["chooie"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": ["source.fixAll.format"],
+  "editor.formatOnSave": true,
+  "editor.rulers": [80],
+  "files.trimTrailingWhitespace": true,
+  "deno.enable": true,
+  "deno.lint": true
+}

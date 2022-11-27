@@ -1,0 +1,8 @@
+// FINALLY
+{
+  "tasks": {
+    "start": "deno run src/assembler.ts",
+    "check-all": "deno fmt && deno lint && deno check src/assembler.ts && deno test",
+    "check-all-watch": "deno run --allow-read --allow-run watcher.ts"
+  }
+}
