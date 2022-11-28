@@ -1,8 +1,9 @@
-// FINALLY
+// FINALLY we can do comments
 {
   "tasks": {
-    "start": "deno run src/assembler.ts",
-    "check-all": "deno fmt && deno lint && deno check src/assembler.ts && deno test",
-    "check-all-watch": "deno run --allow-read --allow-run watcher.ts"
+    "start": "deno run src/app/1_main_assembler.ts",
+    "start-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task start'",
+    "check-all": "deno fmt && deno lint && deno check src/app/1_main_assembler.ts && deno test --allow-read",
+    "check-all-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task check-all'"
   }
 }

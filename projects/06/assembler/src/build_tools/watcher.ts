@@ -1,12 +1,18 @@
-const watcher = Deno.watchFs("./src");
-console.log("Watching repo for changes...");
+const path = "./src";
+const watcher = Deno.watchFs(path);
+
+const command = Deno.args[0];
 
 let canRun = true;
 
-run();
+await run();
+
+const pathMessage = `👀 Watching ${path} for changes... 👀`;
+console.log(pathMessage);
 
 for await (const _event of watcher) {
-  // _debug(_event)
+  // NOTE: Uncomment this if we need to look at events
+  // _debug(_event);
 
   if (canRun) {
     canRun = false;
@@ -15,12 +21,14 @@ for await (const _event of watcher) {
     // 3 events seems to trigger every time I save
     setTimeout(() => {
       canRun = true;
+      console.log(pathMessage);
     }, 1000);
   }
 }
 
 async function run() {
-  const process = Deno.run({ cmd: ["deno", "task", "check-all"] });
+  console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+  const process = Deno.run({ cmd: command.split(" ") });
   const status = await process.status();
   const { success } = status;
   if (!success) {
@@ -28,7 +36,7 @@ async function run() {
   } else {
     console.log("✅ SUCCESS ✅");
   }
-  console.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 }
 
 function _debug(event: Deno.FsEvent) {
