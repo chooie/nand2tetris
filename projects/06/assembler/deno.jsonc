@@ -3,7 +3,7 @@
   "tasks": {
     "start": "deno run src/app/1_main_assembler.ts",
     "start-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task start'",
-    "check-all": "deno fmt && deno lint && deno check src/app/1_main_assembler.ts && deno test --allow-read",
+    "check-all": "deno fmt && deno lint && deno check src/app/1_main_assembler.ts && deno test --allow-read --allow-write",
     "check-all-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task check-all'"
   }
 }

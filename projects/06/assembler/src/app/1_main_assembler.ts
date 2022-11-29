@@ -7,5 +7,19 @@ export function run() {
 }
 
 export async function readTextFile(absolutePath: string) {
-  return await Deno.readTextFile(absolutePath);
+  try {
+    return await Deno.readTextFile(absolutePath);
+  } catch (error) {
+    // if (error instanceof Deno.errors.NotFound) {
+    return {
+      isError: true,
+      errorType: error.name,
+      errorMessage: error.message,
+      attemptedPath: absolutePath,
+    };
+  }
+}
+
+export async function writeTextFile(absolutePath: string) {
+  return await Deno.writeTextFile(absolutePath, "foo");
 }
