@@ -1,11 +1,5 @@
 // File name is prefixed with 1_ so it is at the top
 
-console.log(run());
-
-export function run() {
-  return "Hello, world";
-}
-
 export async function readTextFile(absolutePath: string) {
   try {
     return await Deno.readTextFile(absolutePath);
@@ -20,6 +14,6 @@ export async function readTextFile(absolutePath: string) {
   }
 }
 
-export async function writeTextFile(absolutePath: string) {
-  return await Deno.writeTextFile(absolutePath, "foo");
+export async function writeTextFile(absolutePath: string, content: string) {
+  return await Deno.writeTextFile(absolutePath, content);
 }

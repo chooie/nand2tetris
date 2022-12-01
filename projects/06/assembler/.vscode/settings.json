@@ -1,11 +1,16 @@
 {
   "cSpell.ignoreWords": [],
-  "cSpell.words": ["chooie"],
+  "cSpell.words": ["chooie", "nand2tetris", "Schocken"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": ["source.fixAll.format"],
   "editor.formatOnSave": true,
   "editor.rulers": [80],
   "files.trimTrailingWhitespace": true,
   "deno.enable": true,
-  "deno.lint": true
+  "deno.lint": true,
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true,
+    "https://x.nest.land": true,
+    "https://crux.land": true
+  }
 }

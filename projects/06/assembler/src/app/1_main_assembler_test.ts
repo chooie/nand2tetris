@@ -6,26 +6,6 @@ import * as assembler from "./1_main_assembler.ts";
 const __directoryPath = path.dirname(path.fromFileUrl(import.meta.url));
 
 Deno.test("Assembler", async (t) => {
-  await t.step("is true", () => {
-    assertStrictEquals(true, true);
-  });
-  await t.step("is false", () => {
-    assertStrictEquals(false, false);
-  });
-  await t.step("can do async checks", async () => {
-    const result = await new Promise((resolve, _reject) => {
-      setTimeout(() => {
-        resolve("returns");
-      }, 20);
-    });
-    assertStrictEquals(result, "returns");
-  });
-
-  await t.step("can get hello world", () => {
-    const actual = assembler.run();
-    assertStrictEquals(actual, "Hello, world");
-  });
-
   await t.step("Files", async (t) => {
     await t.step("Can read from a particular file", async () => {
       const actual = await assembler.readTextFile(
@@ -50,8 +30,20 @@ Deno.test("Assembler", async (t) => {
     await t.step("Can write to a particular file", async () => {
       const actual = await assembler.writeTextFile(
         `${__directoryPath}/test_files/file.generated.txt`,
+        "Foo",
       );
       assertStrictEquals(actual, undefined);
+    });
+
+    await t.step("Can write and then read a file", async () => {
+      const filePath = `${__directoryPath}/test_files/file_write.generated.txt`;
+      const timeNow = Date.now();
+
+      await assembler.writeTextFile(filePath, `${timeNow}`);
+
+      const actual = await assembler.readTextFile(filePath);
+
+      assertStrictEquals(actual, `${timeNow}`);
     });
   });
 });
