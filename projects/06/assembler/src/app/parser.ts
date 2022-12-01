@@ -1,5 +1,12 @@
 // For parsing the input into instructions and instructions into fields
 
+export function parseCodeBlock(codeBlock: string) {
+  const instructions = stripWhiteSpaceAndCommentsForCodeBlock(codeBlock);
+  return instructions.map((instruction) => {
+    return parseInstruction(instruction);
+  });
+}
+
 type A_Instruction = {
   instructionType: "A";
   symbol: string;
@@ -15,7 +22,17 @@ type L_Instruction = {
   symbol: string;
 };
 
-const COMP_INSTRUCTIONS = {
+export const DEST_INSTRUCTIONS = {
+  M: "N",
+  D: "D",
+  MD: "MD",
+  A: "A",
+  AM: "AM",
+  AD: "AD",
+  AMD: "AMD",
+};
+
+export const COMP_INSTRUCTIONS = {
   "0": "0",
   "1": "1",
   "-1": "-1",
@@ -45,7 +62,7 @@ const COMP_INSTRUCTIONS = {
   "D|M": "D|M",
 } as const;
 
-const JUMP_INSTRUCTIONS = {
+export const JUMP_INSTRUCTIONS = {
   JGT: "JGT",
   JEQ: "JEQ",
   JGE: "JGE",
@@ -101,6 +118,10 @@ export function parseInstruction(
       comp = COMP_INSTRUCTIONS[str];
     }
 
+    if (jump === null && comp === null) {
+      throw new Error(`Unrecognized instruction ${str}`);
+    }
+
     return {
       ...cInstruction,
       dest: null,
@@ -108,6 +129,59 @@ export function parseInstruction(
       comp,
     };
   }
+
+  if (equalIndex < 0 && semiColonIndex >= 0) {
+    // No equals, but we do have a semi colon (comp and jump instructions)
+    const instructions = str.split(";");
+    const compInstruction = instructions[0];
+    const jumpInstruction = instructions[1];
+
+    if (!isCompInstruction(compInstruction)) {
+      throw new Error(`Unknown comp instruction: ${compInstruction}`);
+    }
+
+    if (!isJumpInstruction(jumpInstruction)) {
+      throw new Error(`Unknown comp instruction: ${compInstruction}`);
+    }
+
+    return {
+      ...cInstruction,
+      dest: null,
+      comp: compInstruction,
+      jump: jumpInstruction,
+    };
+  }
+
+  if (equalIndex >= 0 && semiColonIndex < 0) {
+    // We do have an equals, but we don't have a semi colon
+    const instruction = str.split("=");
+    const destInstruction = instruction[0];
+    const compInstruction = instruction[1];
+    return {
+      ...cInstruction,
+      dest: destInstruction,
+      comp: compInstruction,
+      jump: null,
+    };
+  }
+
+  const fullInstructionRegex = /(.+)=(.+);(.+)/;
+  const match = str.match(fullInstructionRegex);
+
+  if (!match) {
+    throw new Error(`Unrecognized instruction line ${match}`);
+  }
+
+  const destInstruction = match[1];
+  const compInstruction = match[2];
+  const jumpInstruction = match[3];
+
+  return {
+    ...cInstruction,
+    dest: destInstruction,
+    comp: compInstruction,
+    jump: jumpInstruction,
+  };
 }
 
 function isSingleInstruction(equalIndex: number, semiColonIndex: number) {
