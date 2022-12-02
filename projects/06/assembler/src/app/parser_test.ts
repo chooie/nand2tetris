@@ -28,7 +28,7 @@ const test = describe("Parser");
 
 describe(test, "Parses code block", () => {
   const actual = parser.parseCodeBlock(SOURCE_CODE);
-  const expected = [
+  const expected: readonly parser.Instruction[] = [
     {
       instructionType: "A",
       symbol: "2",
@@ -118,7 +118,7 @@ describe(test, "Instructions", () => {
     it("throws when jump or comp are invalid", () => {
       assertThrows<Error>(
         () => {
-          parser.parseInstruction("NOTEXIST");
+          parser.parseInstruction("DOES_NOT_EXIST");
         },
         Error,
         "Unrecognized instruction",
@@ -132,7 +132,7 @@ describe(test, "Instructions", () => {
         dest: null,
         comp: "0",
         jump: "JEQ",
-      };
+      } as const;
       assertEquals(actual, expected);
     });
 
@@ -143,7 +143,7 @@ describe(test, "Instructions", () => {
         dest: "D",
         comp: "1",
         jump: null,
-      };
+      } as const;
       assertEquals(actual, expected);
     });
 
@@ -154,7 +154,7 @@ describe(test, "Instructions", () => {
         dest: "D",
         comp: "1",
         jump: "JGT",
-      };
+      } as const;
       assertEquals(actual, expected);
     });
   });

@@ -9,40 +9,40 @@ describe("Code", () => {
       code.convertAInstruction({
         symbol: "0",
       }),
-      "0000000000000000"
+      "0000000000000000",
     );
 
     assertStrictEquals(
       code.convertAInstruction({
         symbol: "1",
       }),
-      "0000000000000001"
+      "0000000000000001",
     );
 
     assertStrictEquals(
       code.convertAInstruction({
         symbol: "32767",
       }),
-      "0111111111111111"
+      "0111111111111111",
     );
   });
 
   it("converts base 10 integer to 15-bit binary string", () => {
     assertStrictEquals(
       code.convertNumberTo15BitBinaryString("0"),
-      "000000000000000"
+      "000000000000000",
     );
     assertStrictEquals(
       code.convertNumberTo15BitBinaryString("100"),
-      "000000000000100"
+      "000000000000100",
     );
     assertStrictEquals(
       code.convertNumberTo15BitBinaryString("1101"),
-      "000000000001101"
+      "000000000001101",
     );
     assertStrictEquals(
       code.convertNumberTo15BitBinaryString("11101101"),
-      "000000011101101"
+      "000000011101101",
     );
   });
 
@@ -60,9 +60,16 @@ describe("Code", () => {
         comp: "D+1",
         jump: "JLE",
       }),
-      "1110011111010110"
+      "1110011111010110",
     );
-    assertStrictEquals(code.convertDest("AMD"), "111");
+    assertStrictEquals(
+      code.convertCInstruction({
+        dest: "D",
+        comp: "D+1",
+        jump: "JLE",
+      }),
+      "1110011111010110",
+    );
   });
 
   it("converts dest instructions", () => {
@@ -77,7 +84,7 @@ describe("Code", () => {
   });
 
   it("converts jump instructions", () => {
-    assertStrictEquals(code.convertJump(null), "UNKNOWN?");
+    assertStrictEquals(code.convertJump(null), "000");
     assertStrictEquals(code.convertJump("JGT"), "001");
     assertStrictEquals(code.convertJump("JLT"), "100");
     assertStrictEquals(code.convertJump("JMP"), "111");

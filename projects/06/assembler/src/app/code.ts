@@ -2,7 +2,9 @@
 
 const MAX_SUPPORTED_INTEGER = 32767;
 
-type A_Instruction = {
+export type Instruction = A_Instruction | C_Instruction;
+
+export type A_Instruction = {
   symbol: string;
 };
 
@@ -17,7 +19,7 @@ export function convertAInstruction(instruction: A_Instruction) {
 
   if (theNumber > MAX_SUPPORTED_INTEGER) {
     throw new Error(
-      `Number '${symbol}' is too high. Max number is ${MAX_SUPPORTED_INTEGER}`
+      `Number '${symbol}' is too high. Max number is ${MAX_SUPPORTED_INTEGER}`,
     );
   }
 
@@ -61,10 +63,10 @@ export function convertNumberToBinaryString(theNumber: number) {
   return binaryNumbers;
 }
 
-type C_Instruction = {
-  dest: keyof typeof DEST_MAPPING;
-  comp: keyof typeof COMP_MAPPING;
-  jump: keyof typeof JUMP_MAPPING;
+export type C_Instruction = {
+  dest: keyof typeof DEST_MAPPING | null;
+  comp: keyof typeof COMP_MAPPING | null;
+  jump: keyof typeof JUMP_MAPPING | null;
 };
 
 export function convertCInstruction(instruction: C_Instruction) {
@@ -101,7 +103,7 @@ export function convertDest(instruction: string | null) {
 }
 
 function isDestInstruction(
-  str: string | null
+  str: string | null,
 ): str is keyof typeof DEST_MAPPING {
   return str === null || str in DEST_MAPPING;
 }
@@ -152,7 +154,7 @@ export function convertComp(instruction: string | null) {
 }
 
 function isCompInstruction(
-  str: string | null
+  str: string | null,
 ): str is keyof typeof COMP_MAPPING {
   return str === null || str in COMP_MAPPING;
 }
@@ -175,14 +177,14 @@ export function convertJump(instruction: string | null) {
   }
 
   if (instruction === null) {
-    return "UNKNOWN?";
+    return "000";
   }
 
   return JUMP_MAPPING[instruction];
 }
 
 function isJumpInstruction(
-  str: string | null
+  str: string | null,
 ): str is keyof typeof JUMP_MAPPING {
   return str === null || str in JUMP_MAPPING;
 }

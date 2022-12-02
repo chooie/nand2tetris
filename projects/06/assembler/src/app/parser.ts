@@ -1,5 +1,7 @@
 // For parsing the input into instructions and instructions into fields
 
+export type Instruction = A_Instruction | C_Instruction | L_Instruction;
+
 export function parseCodeBlock(codeBlock: string) {
   const instructions = stripWhiteSpaceAndCommentsForCodeBlock(codeBlock);
   return instructions.map((instruction) => {
@@ -7,19 +9,19 @@ export function parseCodeBlock(codeBlock: string) {
   });
 }
 
-type A_Instruction = {
+export type A_Instruction = {
   instructionType: "A";
   symbol: string;
 };
 
-type C_Instruction = {
+export type C_Instruction = {
   instructionType: "C";
-  dest: keyof typeof DEST_INSTRUCTIONS;
-  comp: keyof typeof COMP_INSTRUCTIONS;
-  jump: keyof typeof JUMP_INSTRUCTIONS;
+  dest: keyof typeof DEST_INSTRUCTIONS | null;
+  comp: keyof typeof COMP_INSTRUCTIONS | null;
+  jump: keyof typeof JUMP_INSTRUCTIONS | null;
 };
 
-type L_Instruction = {
+export type L_Instruction = {
   instructionType: "L";
   symbol: string;
 };
@@ -32,7 +34,7 @@ export const DEST_INSTRUCTIONS = {
   AM: "AM",
   AD: "AD",
   AMD: "AMD",
-};
+} as const;
 
 export const COMP_INSTRUCTIONS = {
   "0": "0",
@@ -74,9 +76,7 @@ export const JUMP_INSTRUCTIONS = {
   JMP: "JMP",
 } as const;
 
-export function parseInstruction(
-  str: string,
-): A_Instruction | C_Instruction | L_Instruction | unknown {
+export function parseInstruction(str: string): Instruction {
   if (str === "") {
     throw new Error("String must not be empty");
   }
@@ -97,13 +97,9 @@ export function parseInstruction(
     };
   }
 
-  // Find ;
-  // Find =
-  // No (; or =)? Then either c instruction or jump instruction
-
   const cInstruction = {
     instructionType: "C",
-  };
+  } as const;
 
   const equalIndex = str.indexOf("=");
   const semiColonIndex = str.indexOf(";");
@@ -159,6 +155,15 @@ export function parseInstruction(
     const instruction = str.split("=");
     const destInstruction = instruction[0];
     const compInstruction = instruction[1];
+
+    if (!isDestInstruction(destInstruction)) {
+      throw new Error(`Unknown dest instruction: ${destInstruction}`);
+    }
+
+    if (!isCompInstruction(compInstruction)) {
+      throw new Error(`Unknown comp instruction: ${compInstruction}`);
+    }
+
     return {
       ...cInstruction,
       dest: destInstruction,
@@ -178,6 +183,18 @@ export function parseInstruction(
   const compInstruction = match[2];
   const jumpInstruction = match[3];
 
+  if (!isDestInstruction(destInstruction)) {
+    throw new Error(`Unknown dest instruction: ${destInstruction}`);
+  }
+
+  if (!isCompInstruction(compInstruction)) {
+    throw new Error(`Unknown comp instruction: ${compInstruction}`);
+  }
+
+  if (!isJumpInstruction(jumpInstruction)) {
+    throw new Error(`Unknown comp instruction: ${compInstruction}`);
+  }
+
   return {
     ...cInstruction,
     dest: destInstruction,
@@ -188,6 +205,10 @@ export function parseInstruction(
 
 function isSingleInstruction(equalIndex: number, semiColonIndex: number) {
   return equalIndex < 0 && semiColonIndex < 0;
+}
+
+function isDestInstruction(str: string): str is keyof typeof DEST_INSTRUCTIONS {
+  return str in DEST_INSTRUCTIONS;
 }
 
 function isJumpInstruction(str: string): str is keyof typeof JUMP_INSTRUCTIONS {

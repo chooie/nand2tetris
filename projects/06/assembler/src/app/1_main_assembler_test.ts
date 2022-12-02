@@ -1,5 +1,6 @@
 import { assertEquals, assertStrictEquals } from "./utilities/asserts.ts";
 import { describe, it } from "./utilities/bdd.ts";
+import * as multiline from "./utilities/multiline.ts";
 import * as path from "./utilities/path.ts";
 
 import * as assembler from "./1_main_assembler.ts";
@@ -7,6 +8,36 @@ import * as assembler from "./1_main_assembler.ts";
 const __directoryPath = path.dirname(path.fromFileUrl(import.meta.url));
 
 const test = describe("Assembler");
+
+const SOURCE_CODE = multiline.stripIndent`
+  // This file is part of www.nand2tetris.org
+  // and the book "The Elements of Computing Systems"
+  // by Nisan and Schocken, MIT Press.
+  // File name: projects/06/add/Add.asm
+
+  // Computes R0 = 2 + 3  (R0 refers to RAM[0])
+
+  @2
+  D=A
+  @3
+  D=D+A
+  @0
+  M=D
+`;
+
+describe(test, "Assemble", () => {
+  it("can assemble code", () => {
+    const expected = multiline.stripIndent`
+      0000000000000010
+      1110110000010000
+      0000000000000011
+      1110000010010000
+      0000000000000000
+      1110001100001000
+    `;
+    assertStrictEquals(assembler.assemble(SOURCE_CODE), expected);
+  });
+});
 
 describe(test, "Files", () => {
   it("Can read from a particular file", async () => {
