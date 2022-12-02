@@ -44,9 +44,9 @@ describe(test, "Parses code block", () => {
       symbol: "3",
     },
     {
+      instructionType: "C",
       comp: "D+A",
       dest: "D",
-      instructionType: "C",
       jump: null,
     },
     {
@@ -54,9 +54,9 @@ describe(test, "Parses code block", () => {
       symbol: "0",
     },
     {
+      instructionType: "C",
       comp: "D",
       dest: "M",
-      instructionType: "C",
       jump: null,
     },
   ];
