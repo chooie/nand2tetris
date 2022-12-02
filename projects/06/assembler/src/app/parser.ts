@@ -14,7 +14,9 @@ type A_Instruction = {
 
 type C_Instruction = {
   instructionType: "C";
-  jump: "JLE";
+  dest: keyof typeof DEST_INSTRUCTIONS;
+  comp: keyof typeof COMP_INSTRUCTIONS;
+  jump: keyof typeof JUMP_INSTRUCTIONS;
 };
 
 type L_Instruction = {
