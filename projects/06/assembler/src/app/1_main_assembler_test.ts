@@ -1,7 +1,7 @@
-import { assertEquals, assertStrictEquals } from "./utilities/asserts.ts";
-import { describe, it } from "./utilities/bdd.ts";
-import * as multiline from "./utilities/multiline.ts";
-import * as path from "./utilities/path.ts";
+import { assertEquals, assertStrictEquals } from "@utils/asserts.ts";
+import { describe, it } from "@utils/bdd.ts";
+import * as multiline from "@utils/multiline.ts";
+import * as path from "@utils/path.ts";
 
 import * as assembler from "./1_main_assembler.ts";
 

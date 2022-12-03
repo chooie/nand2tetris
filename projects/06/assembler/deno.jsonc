@@ -1,5 +1,6 @@
 // FINALLY we can do comments
 {
+  "importMap": "import_map.json",
   "tasks": {
     "start": "deno run src/app/1_main_assembler.ts",
     "start-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task start'",
