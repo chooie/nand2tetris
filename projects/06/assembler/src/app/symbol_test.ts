@@ -20,7 +20,7 @@ describe("Symbol", () => {
 
   it("can add a new symbol", () => {
     const symbolTable = symbol.makeSymbolTable();
-    symbolTable.add("FOOBAR", null);
+    symbolTable.add("FOOBAR", 123);
 
     assertEquals(symbolTable.doesContain("FOOBAR"), true);
     assertThrows<Error>(
@@ -34,11 +34,11 @@ describe("Symbol", () => {
 
   it("can get the address of a symbol", () => {
     const symbolTable = symbol.makeSymbolTable();
-    symbolTable.add("FOOBAR", null);
+    symbolTable.add("FOOBAR", 123);
     symbolTable.add("SOME_SYMBOL", 123);
 
     assertEquals(symbolTable.getSymbolAddress("LOOP"), 4);
-    assertEquals(symbolTable.getSymbolAddress("FOOBAR"), null);
+    assertEquals(symbolTable.getSymbolAddress("FOOBAR"), 123);
     assertEquals(symbolTable.getSymbolAddress("SOME_SYMBOL"), 123);
   });
 });

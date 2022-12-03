@@ -26,41 +26,43 @@ const SOURCE_CODE = multiline.stripIndent`
 
 const test = describe("Parser");
 
-describe(test, "Parses code block", () => {
-  const actual = parser.parseCodeBlock(SOURCE_CODE);
-  const expected: readonly parser.Instruction[] = [
-    {
-      instructionType: "A",
-      symbol: "2",
-    },
-    {
-      instructionType: "C",
-      dest: "D",
-      comp: "A",
-      jump: null,
-    },
-    {
-      instructionType: "A",
-      symbol: "3",
-    },
-    {
-      instructionType: "C",
-      comp: "D+A",
-      dest: "D",
-      jump: null,
-    },
-    {
-      instructionType: "A",
-      symbol: "0",
-    },
-    {
-      instructionType: "C",
-      comp: "D",
-      dest: "M",
-      jump: null,
-    },
-  ];
-  assertEquals(actual, expected);
+describe(test, "Parses code", () => {
+  it("1st block", () => {
+    const actual = parser.parseCodeBlock(SOURCE_CODE);
+    const expected: readonly parser.Instruction[] = [
+      {
+        instructionType: "A",
+        symbol: "2",
+      },
+      {
+        instructionType: "C",
+        dest: "D",
+        comp: "A",
+        jump: null,
+      },
+      {
+        instructionType: "A",
+        symbol: "3",
+      },
+      {
+        instructionType: "C",
+        comp: "D+A",
+        dest: "D",
+        jump: null,
+      },
+      {
+        instructionType: "A",
+        symbol: "0",
+      },
+      {
+        instructionType: "C",
+        comp: "D",
+        dest: "M",
+        jump: null,
+      },
+    ];
+    assertEquals(actual, expected);
+  });
 });
 
 describe(test, "Instructions", () => {

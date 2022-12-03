@@ -1,5 +1,7 @@
 // For translating the fields (symbolic mnemonics) into binary codes
 
+import * as symbol from "./symbol.ts";
+
 const MAX_SUPPORTED_INTEGER = 32767;
 
 export type Instruction = A_Instruction | C_Instruction;
@@ -8,14 +10,15 @@ export type A_Instruction = {
   symbol: string;
 };
 
-export function convertAInstruction(instruction: A_Instruction) {
+export function convertAInstruction(
+  symbolTable: symbol.SymbolTable,
+  instruction: A_Instruction,
+) {
   const { symbol } = instruction;
 
-  if (!isInteger(symbol)) {
-    throw new Error("Symbols not currently supported");
-  }
-
-  const theNumber = parseInt(symbol);
+  const theNumber = isInteger(symbol)
+    ? parseInt(symbol)
+    : symbolTable.getSymbolAddress(symbol);
 
   if (theNumber > MAX_SUPPORTED_INTEGER) {
     throw new Error(

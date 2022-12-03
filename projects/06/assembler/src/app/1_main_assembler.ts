@@ -1,23 +1,60 @@
 // File name is prefixed with 1_ so it is at the top
+import * as multiline from "@utils/multiline.ts";
 
 import * as code from "./code.ts";
 import * as parser from "./parser.ts";
+import * as symbol from "./symbol.ts";
 
 export function assemble(sourceCode: string) {
+  const symbolTable = symbol.makeSymbolTable();
   const parsedInstructions = parser.parseCodeBlock(sourceCode);
-  const binaryInstructions = parsedInstructions.map((instruction) => {
-    if (isAInstruction(instruction)) {
-      const { symbol } = instruction;
-      return code.convertAInstruction({ symbol });
-    }
+  let LInstructionsSoFar = 0;
+  const parsedInstructionsLessLInstructions = parsedInstructions.filter(
+    (parsedInstruction, instructionNumber) => {
+      if (isLInstruction(parsedInstruction)) {
+        LInstructionsSoFar += 1;
+        const { symbol } = parsedInstruction;
+        symbolTable.add(
+          symbol,
+          // Next line is what the symbol should point to
+          // We also need to track how many LInstructions have been in the code
+          // so far, because they get removed (and so our instruction gets
+          // shifted up to account for this)
+          instructionNumber + 1 - LInstructionsSoFar,
+        );
+        return false;
+      }
 
-    if (isCInstruction(instruction)) {
-      const { dest, comp, jump } = instruction;
-      return code.convertCInstruction({ dest, comp, jump });
-    }
+      return true;
+    },
+  );
+  const binaryInstructions = parsedInstructionsLessLInstructions.map(
+    (instruction) => {
+      if (isAInstruction(instruction)) {
+        const { symbol } = instruction;
+        return code.convertAInstruction(symbolTable, { symbol });
+      }
 
-    throw new Error(`Unrecognized instruction ${instruction}`);
-  });
+      if (isCInstruction(instruction)) {
+        const { dest, comp, jump } = instruction;
+        return code.convertCInstruction({ dest, comp, jump });
+      }
+
+      if (isLInstruction(instruction)) {
+        const { symbol } = instruction;
+        throw new Error(
+          multiline.stripIndent`
+          L instruction was still present. These need to be parsed out in the
+          initial pass: ${symbol}
+        `,
+        );
+      }
+
+      throw new Error(
+        `Unrecognized instruction ${JSON.stringify(instruction, undefined, 2)}`,
+      );
+    },
+  );
 
   return binaryInstructions.join("\n");
 }
@@ -32,6 +69,12 @@ function isCInstruction(
   instruction: parser.Instruction,
 ): instruction is parser.C_Instruction {
   return instruction.instructionType === "C";
+}
+
+function isLInstruction(
+  instruction: parser.Instruction,
+): instruction is parser.L_Instruction {
+  return instruction.instructionType === "L";
 }
 
 export async function readTextFile(absolutePath: string) {

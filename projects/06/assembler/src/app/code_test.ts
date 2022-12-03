@@ -2,25 +2,28 @@ import { assertStrictEquals } from "@utils/asserts.ts";
 import { describe, it } from "@utils/bdd.ts";
 
 import * as code from "./code.ts";
+import * as symbol from "./symbol.ts";
+
+const symbolTable = symbol.makeSymbolTable();
 
 describe("Code", () => {
   it("converts A instructions", () => {
     assertStrictEquals(
-      code.convertAInstruction({
+      code.convertAInstruction(symbolTable, {
         symbol: "0",
       }),
       "0000000000000000",
     );
 
     assertStrictEquals(
-      code.convertAInstruction({
+      code.convertAInstruction(symbolTable, {
         symbol: "1",
       }),
       "0000000000000001",
     );
 
     assertStrictEquals(
-      code.convertAInstruction({
+      code.convertAInstruction(symbolTable, {
         symbol: "32767",
       }),
       "0111111111111111",

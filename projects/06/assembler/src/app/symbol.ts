@@ -26,8 +26,10 @@ export const PREDEFINED_SYMBOL_TABLE = {
   STOP: 18,
 } as const;
 
+export type SymbolTable = ReturnType<typeof makeSymbolTable>;
+
 export function makeSymbolTable() {
-  const symbolTable: { [key: string]: number | null } = {
+  const symbolTable: { [key: string]: number } = {
     ...PREDEFINED_SYMBOL_TABLE,
   };
 
@@ -36,14 +38,14 @@ export function makeSymbolTable() {
     doesContain(symbol: string): boolean {
       return Object.prototype.hasOwnProperty.call(symbolTable, symbol);
     },
-    add(symbol: string, value: number | null) {
+    add(symbol: string, value: number) {
       if (this.doesContain(symbol)) {
         throw new Error(`Symbol already exists, '${symbol}'`);
       }
 
       symbolTable[symbol] = value;
     },
-    getSymbolAddress(symbol: string): number | null {
+    getSymbolAddress(symbol: string): number {
       return symbolTable[symbol];
     },
   };
