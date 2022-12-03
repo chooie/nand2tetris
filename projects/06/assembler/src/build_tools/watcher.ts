@@ -3,12 +3,16 @@ const watcher = Deno.watchFs(path);
 
 const command = Deno.args[0];
 
-let canRun = true;
+let canRun = false;
 
 await run();
 
 const pathMessage = `👀 Watching ${path} for changes... 👀`;
 console.log(pathMessage);
+
+setTimeout(() => {
+  canRun = true;
+}, 2000);
 
 for await (const _event of watcher) {
   // NOTE: Uncomment this if we need to look at events
