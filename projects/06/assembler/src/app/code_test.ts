@@ -1,4 +1,4 @@
-import { /*assertEquals,*/ assertStrictEquals } from "./utilities/asserts.ts";
+import { assertStrictEquals } from "./utilities/asserts.ts";
 import { describe, it } from "./utilities/bdd.ts";
 
 import * as code from "./code.ts";
