@@ -14,7 +14,7 @@ describe("Symbol", () => {
   it("can check if symbol table contains a symbol", () => {
     const symbolTable = symbol.makeSymbolTable();
 
-    assertEquals(symbolTable.doesContain("LOOP"), true);
+    assertEquals(symbolTable.doesContain("SCREEN"), true);
     assertEquals(symbolTable.doesContain("FOOBAR"), false);
   });
 
@@ -25,20 +25,25 @@ describe("Symbol", () => {
     assertEquals(symbolTable.doesContain("FOOBAR"), true);
     assertThrows<Error>(
       () => {
-        symbolTable.add("LOOP", 123);
+        symbolTable.add("SCREEN", 123);
       },
       Error,
       "Symbol already exists",
     );
   });
 
-  it("can get the address of a symbol", () => {
+  it("can get the address of a symbol that exists", () => {
     const symbolTable = symbol.makeSymbolTable();
     symbolTable.add("FOOBAR", 123);
     symbolTable.add("SOME_SYMBOL", 123);
 
-    assertEquals(symbolTable.getSymbolAddress("LOOP"), 4);
+    assertEquals(symbolTable.getSymbolAddress("SCREEN"), 16384);
     assertEquals(symbolTable.getSymbolAddress("FOOBAR"), 123);
     assertEquals(symbolTable.getSymbolAddress("SOME_SYMBOL"), 123);
+  });
+
+  it("automatically makes an instruction for a symbol that doesn't exist", () => {
+    const symbolTable = symbol.makeSymbolTable();
+    assertEquals(symbolTable.getSymbolAddress("DOES_NOT_EXIST"), 16);
   });
 });

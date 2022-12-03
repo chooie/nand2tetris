@@ -22,13 +22,12 @@ export const PREDEFINED_SYMBOL_TABLE = {
   THAT: 4,
   SCREEN: 16384,
   KBD: 24576,
-  LOOP: 4,
-  STOP: 18,
 } as const;
 
 export type SymbolTable = ReturnType<typeof makeSymbolTable>;
 
 export function makeSymbolTable() {
+  let nextFreeInstructionAddress = 16;
   const symbolTable: { [key: string]: number } = {
     ...PREDEFINED_SYMBOL_TABLE,
   };
@@ -46,6 +45,10 @@ export function makeSymbolTable() {
       symbolTable[symbol] = value;
     },
     getSymbolAddress(symbol: string): number {
+      if (!this.doesContain(symbol)) {
+        this.add(symbol, nextFreeInstructionAddress);
+        nextFreeInstructionAddress += 1;
+      }
       return symbolTable[symbol];
     },
   };

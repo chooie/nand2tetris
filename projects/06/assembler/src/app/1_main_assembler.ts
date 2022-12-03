@@ -77,7 +77,16 @@ function isLInstruction(
   return instruction.instructionType === "L";
 }
 
-export async function readTextFile(absolutePath: string) {
+interface ReadTextFileError {
+  isError: true;
+  errorType: string;
+  errorMessage: string;
+  attemptedPath: string;
+}
+
+export async function readTextFile(
+  absolutePath: string,
+): Promise<string | ReadTextFileError> {
   try {
     return await Deno.readTextFile(absolutePath);
   } catch (error) {
@@ -89,6 +98,16 @@ export async function readTextFile(absolutePath: string) {
       attemptedPath: absolutePath,
     };
   }
+}
+
+export function isReadTextFileError(
+  value: string | ReadTextFileError,
+): value is ReadTextFileError {
+  if (typeof value === "string") {
+    return false;
+  }
+
+  return "isError" in value;
 }
 
 export async function writeTextFile(absolutePath: string, content: string) {

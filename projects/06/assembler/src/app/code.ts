@@ -49,6 +49,10 @@ export function convertNumberTo15BitBinaryString(binaryString: string) {
 }
 
 export function convertNumberToBinaryString(theNumber: number) {
+  if (!Number.isInteger(theNumber)) {
+    throw new Error(`Expected a number, but got ${theNumber}`);
+  }
+
   if (theNumber === 0) {
     return "0";
   }

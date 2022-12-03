@@ -4,6 +4,7 @@ export type Instruction = A_Instruction | C_Instruction | L_Instruction;
 
 export function parseCodeBlock(codeBlock: string) {
   const instructions = stripWhiteSpaceAndCommentsForCodeBlock(codeBlock);
+
   return instructions.map((instruction) => {
     return parseInstruction(instruction);
   });
@@ -220,7 +221,10 @@ function isCompInstruction(str: string): str is keyof typeof COMP_INSTRUCTIONS {
 }
 
 export function stripWhiteSpaceAndCommentsForCodeBlock(codeBlock: string) {
-  const lines = codeBlock.split("\n");
+  const lines = codeBlock.split(
+    // Cross-platform line-break
+    /\r?\n/,
+  );
   const result: string[] = [];
 
   lines.forEach((line) => {
