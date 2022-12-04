@@ -1,7 +1,7 @@
-// FINALLY we can do comments
 {
   "importMap": "import_map.json",
   "tasks": {
+    // Cache all the dependencies
     "cache-deps": "deno cache third_party_dependencies/deps.ts && deno cache third_party_dependencies/test_deps.ts",
     "start": "deno run src/app/1_main_assembler.ts",
     "start-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task start'",
