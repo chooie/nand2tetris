@@ -4,7 +4,7 @@ import { assertEquals, assertStrictEquals, describe, it } from "@test_deps";
 
 import * as multiline from "@utils/multiline.ts";
 
-import * as assembler from "./1_main_assembler.ts";
+import * as assembler from "./assembler.ts";
 
 const __directoryPath = path.dirname(path.fromFileUrl(import.meta.url));
 
@@ -292,6 +292,14 @@ describe(test, "Assemble", () => {
 });
 
 describe(test, "Files", () => {
+  it("makes a destination file path", () => {
+    const actual = assembler.getDestinationFilePath(
+      "./src/app/test_files/Pong.asm",
+    );
+    const expected = "./src/app/test_files/Pong.hack";
+    assertStrictEquals(actual, expected);
+  });
+
   it("Can read from a particular file", async () => {
     const actual = await assembler.readTextFile(
       `${__directoryPath}/test_files/file.txt`,
@@ -328,6 +336,6 @@ describe(test, "Files", () => {
 
     const actual = await assembler.readTextFile(filePath);
 
-    assertStrictEquals(actual, `${timeNow}`);
+    assertStrictEquals(actual, `${timeNow}\n`);
   });
 });

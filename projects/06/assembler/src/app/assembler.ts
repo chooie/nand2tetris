@@ -1,4 +1,3 @@
-// File name is prefixed with 1_ so it is at the top
 import * as multiline from "@utils/multiline.ts";
 
 import * as code from "./code.ts";
@@ -84,6 +83,15 @@ interface ReadTextFileError {
   attemptedPath: string;
 }
 
+export function getDestinationFilePath(filePath: string) {
+  // TODO(chooie): maybe this should be cross platform?
+  const segments = filePath.split("/");
+  const filePathLessFile = segments.slice(0, segments.length - 1).join("/");
+  const fileName = segments[segments.length - 1];
+  const fileNameWithoutExtension = fileName.split(".")[0];
+  return `${filePathLessFile}/${fileNameWithoutExtension}.hack`;
+}
+
 export async function readTextFile(
   absolutePath: string,
 ): Promise<string | ReadTextFileError> {
@@ -111,5 +119,5 @@ export function isReadTextFileError(
 }
 
 export async function writeTextFile(absolutePath: string, content: string) {
-  return await Deno.writeTextFile(absolutePath, content);
+  return await Deno.writeTextFile(absolutePath, `${content}\n`);
 }
