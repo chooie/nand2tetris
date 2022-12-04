@@ -1,6 +1,6 @@
 {
   "cSpell.ignoreWords": [],
-  "cSpell.words": ["chooie", "nand2tetris", "Schocken"],
+  "cSpell.words": ["chooie", "Deno", "nand2tetris", "Schocken"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": ["source.fixAll.format"],
   "editor.formatOnSave": true,
