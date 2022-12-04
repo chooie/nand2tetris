@@ -1,4 +1,4 @@
-const path = "./src";
+const path = "./src"; // Relative to repo root
 const watcher = Deno.watchFs(path);
 
 const command = Deno.args[0];

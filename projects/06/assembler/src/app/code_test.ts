@@ -1,5 +1,4 @@
-import { assertStrictEquals } from "@utils/asserts.ts";
-import { describe, it } from "@utils/bdd.ts";
+import { assertStrictEquals, describe, it } from "@test_deps";
 
 import * as code from "./code.ts";
 import * as symbol from "./symbol.ts";
