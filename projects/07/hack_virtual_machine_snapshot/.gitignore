@@ -1,0 +1,6 @@
+.DS_Store
+*.generated.*
+**/*.asm
+!**/*.KEEP.asm
+virtual_machine
+test.vm

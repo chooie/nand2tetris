@@ -1,0 +1,7 @@
+// Supports comments
+// And empty new lines
+
+push constant 2
+push constant 3
+add
+pop static 0
